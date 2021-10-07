@@ -15,6 +15,7 @@ export class ProductEditComponent implements OnInit {
   errorMessage: string;
 
   product: Product;
+  dataIsValid: {};
 
   constructor(
     private route: ActivatedRoute,
@@ -84,5 +85,33 @@ export class ProductEditComponent implements OnInit {
     }
 
     this.router.navigate(['/products']);
+  }
+
+  validate(): void {
+    this.dataIsValid = {};
+
+    // info tab
+    if (this.product.productName && this.product.productName.length >= 3 && this.product.productCode) {
+      this.dataIsValid['info'] = true;
+    } else {
+      this.dataIsValid['info'] = false;
+    }
+
+    // tags tab
+    if (this.product.category && this.product.category.length >= 3) {
+      this.dataIsValid['tags'] = true;
+    } else {
+      this.dataIsValid['tags'] = false;
+    }
+  }
+
+  isValid(path?: string): boolean {
+    this.validate();
+
+    if (path) {
+      return this.dataIsValid[path];
+    }
+
+    return (this.dataIsValid && Object.keys(this.dataIsValid).every(key => this.dataIsValid[key] === true));
   }
 }
