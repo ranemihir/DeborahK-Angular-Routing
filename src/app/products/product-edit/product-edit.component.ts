@@ -14,8 +14,23 @@ export class ProductEditComponent implements OnInit {
   pageTitle = 'Product Edit';
   errorMessage: string;
 
-  product: Product;
   dataIsValid: {};
+
+  currentProduct: Product;
+  originalProduct: Product;
+
+  get product(): Product {
+    return this.currentProduct;
+  }
+
+  set product(value: Product) {
+    this.currentProduct = value;
+    this.originalProduct = { ...value };
+  }
+
+  get isDirty(): boolean {
+    return JSON.stringify(this.currentProduct) === JSON.stringify(this.originalProduct);
+  }
 
   constructor(
     private route: ActivatedRoute,
@@ -82,7 +97,7 @@ export class ProductEditComponent implements OnInit {
     if (message) {
       this.messageService.addMessage(message);
     }
-
+    this.reset();
     this.router.navigate(['/products']);
   }
 
@@ -112,5 +127,11 @@ export class ProductEditComponent implements OnInit {
     }
 
     return (this.dataIsValid && Object.keys(this.dataIsValid).every(key => this.dataIsValid[key] === true));
+  }
+
+  reset(): void {
+    this.dataIsValid = null;
+    this.originalProduct = null;
+    this.currentProduct = null;
   }
 }

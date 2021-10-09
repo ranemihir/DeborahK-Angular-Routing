@@ -8,6 +8,8 @@ import { ProductEditTagsComponent } from './product-edit/product-edit-tags.compo
 
 import { SharedModule } from '../shared/shared.module';
 import { RouterModule } from '@angular/router';
+import { AuthGuard } from "../user/auth.guard";
+import { ProductEditGuard } from './product-edit/product-edit.guard';
 
 import { ProductResolver } from './product-resolver.service';
 
@@ -16,36 +18,32 @@ import { ProductResolver } from './product-resolver.service';
     SharedModule,
     RouterModule.forChild([
       {
-        path: 'products',
+        path: '',
+        component: ProductListComponent
+      },
+      {
+        path: ':id',
+        component: ProductDetailComponent,
+        resolve: { resolvedData: ProductResolver }
+      },
+      {
+        path: ':id/edit',
+        component: ProductEditComponent,
+        resolve: { resolvedData: ProductResolver },
+        canDeactivate: [ProductEditGuard],
         children: [
           {
             path: '',
-            component: ProductListComponent
+            redirectTo: 'info',
+            pathMatch: 'full'
           },
           {
-            path: ':id',
-            component: ProductDetailComponent,
-            resolve: { resolvedData: ProductResolver }
+            path: 'info',
+            component: ProductEditInfoComponent
           },
           {
-            path: ':id/edit',
-            component: ProductEditComponent,
-            resolve: { resolvedData: ProductResolver },
-            children: [
-              {
-                path: '',
-                redirectTo: 'info',
-                pathMatch: 'full'
-              },
-              {
-                path: 'info',
-                component: ProductEditInfoComponent
-              },
-              {
-                path: 'tags',
-                component: ProductEditTagsComponent
-              }
-            ]
+            path: 'tags',
+            component: ProductEditTagsComponent
           }
         ]
       },
